@@ -1,0 +1,163 @@
+const modeSalary = document.getElementById('modeSalary');
+const modeTrienios = document.getElementById('modeTrienios');
+const salaryFields = document.getElementById('salaryFields');
+const trieniosFields = document.getElementById('trieniosFields');
+const predoctoralStart = document.getElementById('predoctoralStart');
+const fpuConv = document.getElementById('fpuConv');
+const umaStart = document.getElementById('umaStart');
+const umaEnd = document.getElementById('umaEnd');
+const calculateBtn = document.getElementById('calculateBtn');
+const resultBox = document.getElementById('result');
+const calculatorInstructions = document.getElementById('calculatorInstructions');
+const breakdownDetails = document.getElementById('breakdownDetails');
+const breakdownContainer = document.getElementById('breakdownContainer');
+
+let currentMode = 'salary';
+
+function switchMode(mode) {
+  currentMode = mode;
+  modeSalary.classList.toggle('active', mode === 'salary');
+  modeTrienios.classList.toggle('active', mode === 'trienios');
+  salaryFields.classList.toggle('hidden', mode !== 'salary');
+  trieniosFields.classList.toggle('hidden', mode !== 'trienios');
+
+  if (mode === 'salary') {
+    calculatorInstructions.textContent = 'Introduce la fecha de inicio del contrato predoctoral \
+                                          y selecciona si perteneces a una convocatoria FPU reciente.';
+  } else {
+    calculatorInstructions.textContent = 'Introduce la fecha desde la que empezaste a estar contratado \
+                                          en la UMA y, si procede, la fecha final del contrato.';
+  }
+
+  resultBox.textContent = 'Selecciona una opción y completa los datos para calcular.';
+  resultBox.style.color = varComputedColor(resultBox, '--text');
+  clearBreakdown();
+}
+
+modeSalary.addEventListener('click', () => switchMode('salary'));
+modeTrienios.addEventListener('click', () => switchMode('trienios'));
+
+calculateBtn.addEventListener('click', () => {
+  if (currentMode === 'salary') {
+    const fechaValor = predoctoralStart.value;
+    const fpuValor = fpuConv.value;
+
+    if (!fechaValor) {
+      resultBox.textContent = 'Rellena la fecha de inicio del contrato predoctoral \
+                              para calcular el salario atrasado.';
+      resultBox.style.color = '#b91c1c';
+      return;
+    }
+
+    const fecha = new Date(fechaValor + 'T00:00:00');
+    const resultado = calcularSalarioAtrasado(fecha, fpuValor);
+
+    if (!resultado) {
+      resultBox.textContent = 'La fecha de inicio no puede ser posterior a hoy.';
+      resultBox.style.color = '#b91c1c';
+      return;
+    }
+
+    resultBox.style.color = varComputedColor(resultBox, '--text');
+    // Damos el salario con máximo 2 cifras decimales
+    if (resultado.deuda === 0) {
+      resultBox.innerHTML = `No tienes salario atrasado acumulado según EPIPF.`;
+      clearBreakdown();
+    } else {
+      const addText = resultado.indemnizacion > 0 ? `<br>De los cuales 
+            ${resultado.indemnizacion.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}€
+            corresponden a la indemnización por fin de contrato.` : '';
+      const total = resultado.deuda + resultado.indemnizacion;
+      resultBox.innerHTML = `Deuda bruta estimada por atrasos salariales: 
+                            ${total.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}€` + addText;
+      renderBreakdown(resultado.breakdown);
+    }
+  } else {
+    const startValor = umaStart.value;
+    const endValor = umaEnd.value;
+
+    if (!startValor) {
+      resultBox.textContent = 'Introduce la fecha de inicio del contrato en la UMA para calcular tus trienios.';
+      resultBox.style.color = '#b91c1c';
+      return;
+    }
+
+    const fechaInicio = new Date(startValor + 'T00:00:00');
+    const fechaFin = endValor ? new Date(endValor + 'T00:00:00') : null;
+    const resultado = calcularTrienios(fechaInicio, fechaFin);
+
+    if (!resultado) {
+      resultBox.textContent = 'La fecha de inicio no puede ser posterior a la fecha final ni a hoy.';
+      resultBox.style.color = '#b91c1c';
+      clearBreakdown();
+      return;
+    }
+
+    resultBox.style.color = varComputedColor(resultBox, '--text');
+    if (resultado.trienios === 0) {
+      resultBox.innerHTML = `Aún no tienes un trienio completo.<br>
+                            Llevas ${resultado.anos.toFixed(1)} años 
+                            (≈${resultado.totalMonths} meses completos) en la UMA.`;
+      clearBreakdown();
+    } else {
+      resultBox.innerHTML = `Tienes ${resultado.trienios} trienio(s) completos tras 
+                            ${resultado.totalMonths} meses.<br>Deuda bruta estimada acumulada: 
+                            ${resultado.deuda.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}€.`;
+      renderBreakdown(resultado.breakdown);
+    }
+  }
+});
+
+function clearBreakdown() {
+  breakdownContainer.innerHTML = '';
+  breakdownDetails.classList.add('hidden');
+}
+
+function renderBreakdown(breakdown) {
+  if (!breakdown || typeof breakdown !== 'object' || Object.keys(breakdown).length === 0) {
+    breakdownContainer.innerHTML = '<p>No hay desglose disponible.</p>';
+    breakdownDetails.classList.remove('hidden');
+    return;
+  }
+
+  // Obtener años únicos y ordenarlos
+  const years = Object.keys(breakdown).map(Number).sort((a, b) => a - b);
+  
+  if (years.length === 0) {
+    breakdownContainer.innerHTML = '<p>No hay desglose disponible.</p>';
+    breakdownDetails.classList.remove('hidden');
+    return;
+  }
+
+  let html = '<div class="breakdown-info">Matriz de meses (filas) por años (columnas). \
+              Cada celda muestra el dinero acumulado en ese mes.</div>';
+  html += '<div class="breakdown-scroll"><table class="breakdown-matrix-table"><thead><tr><th>Mes</th>';
+  
+  // Encabezados de años
+  years.forEach(year => {
+    html += `<th>${year}</th>`;
+  });
+  html += '</tr></thead><tbody>';
+
+  // Filas para cada mes
+  for (let month = 1; month <= 12; month++) {
+    const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    html += `<tr><td class="month-label">${monthNames[month - 1]}</td>`;
+    
+    years.forEach(year => {
+      const amount = breakdown[year] && breakdown[year][month] !== undefined ? breakdown[year][month] : 0;
+      const displayAmount = amount > 0 ? amount.toFixed(2) : '-';
+      html += `<td class="amount-cell">${displayAmount}</td>`;
+    });
+    
+    html += '</tr>';
+  }
+
+  html += '</tbody></table></div>';
+  breakdownContainer.innerHTML = html;
+  breakdownDetails.classList.remove('hidden');
+}
+
+function varComputedColor(element, variable) {
+  return getComputedStyle(element).getPropertyValue(variable) || '#1f2937';
+}
