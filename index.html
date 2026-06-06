@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Salarios y Trienios PI</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <h1>Retribuciones no pagadas al Personal Investigador de la UMA</h1>
+      </div>
+      <img src="LogoCIMA_estrecho_FondoTransparente.png" alt="Logo CIMA" class="logo" />
+    </header>
+
+    <section class="intro">
+      <p>Esta página explica de forma sencilla la situación salarial en la UMA y permite calcular dos 
+        deudas clave: el salario atrasado por contratos predoctorales y los trienios adeudados por 
+        antigüedad en la universidad.</p>
+    </section>
+
+    <section class="card calculator">
+      <div class="calculator-header">
+        <p class="calculator-note">Elige el cálculo según tu situación:</p>
+        <div class="calculator-tabs">
+          <button id="modeSalary" type="button" class="mode-button active">Salario atrasado</button>
+          <button id="modeTrienios" type="button" class="mode-button">Trienios</button>
+        </div>
+        <p id="calculatorInstructions" class="calculator-instructions">Introduce la fecha de inicio del 
+          contrato predoctoral y selecciona si perteneces a una convocatoria FPU reciente.</p>
+      </div>
+
+      <div class="field-group" id="salaryFields">
+        <label for="predoctoralStart">Fecha inicio del contrato predoctoral</label>
+        <input id="predoctoralStart" type="date" />
+
+        <label for="fpuConv">¿Perteneces a una convocatoria FPU reciente?</label>
+        <select id="fpuConv">
+          <option value="none" selected>No, no pertenezco a FPU 22/23/24</option>
+          <option value="FPU22">FPU 22</option>
+          <option value="FPU23">FPU 23</option>
+          <option value="FPU24">FPU 24</option>
+        </select>
+      </div>
+
+      <div class="field-group hidden" id="trieniosFields">
+        <label for="umaStart">Fecha desde la que empezaste a estar contratado/a en la UMA</label>
+        <input id="umaStart" type="date" />
+
+        <label for="umaEnd">Fecha final del contrato (opcional, si ya no trabajas en la UMA)</label>
+        <input id="umaEnd" type="date" />
+      </div>
+
+      <div class="button-row">
+        <button id="calculateBtn" type="button">Calcular</button>
+      </div>
+
+      <div id="result" class="result-box">Selecciona una opción y completa los datos para calcular.</div>
+
+      <details id="breakdownDetails" class="breakdown-details hidden">
+        <summary class="breakdown-summary">Ver desglose mensual</summary>
+        <div id="breakdownContainer" class="breakdown-container"></div>
+      </details>
+
+      <div class="disclaimer">
+      <p>Esta calculadora ofrece una estimación para entender mejor lo que podría deberte la UMA en concepto 
+        de subidas salariales y trienios. Para datos oficiales, consulta con tu representación sindical 
+        o jurídica.</p>
+    </div>
+    </section>
+
+  
+
+  <section class="social-section" aria-label="Redes y contacto">
+    <div class="social-inner">
+      <h3>Síguenos en redes o envíanos un correo electrónico</h3>
+
+      <div class="social-icons">
+        <a href="https://www.instagram.com/participacima/" class="social-link" title="Instagram" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M12,4.622c2.403,0,2.688,0.009,3.637,0.052c0.877,0.04,1.354,0.187,1.671,0.31c0.42,0.163,0.72,0.358,1.035,0.673 c0.315,0.315,0.51,0.615,0.673,1.035c0.123,0.317,0.27,0.794,0.31,1.671c0.043,0.949,0.052,1.234,0.052,3.637 s-0.009,2.688-0.052,3.637c-0.04,0.877-0.187,1.354-0.31,1.671c-0.163,0.42-0.358,0.72-0.673,1.035 c-0.315,0.315-0.615,0.51-1.035,0.673c-0.317,0.123-0.794,0.27-1.671,0.31c-0.949,0.043-1.233,0.052-3.637,0.052 s-2.688-0.009-3.637-0.052c-0.877-0.04-1.354-0.187-1.671-0.31c-0.42-0.163-0.72-0.358-1.035-0.673 c-0.315-0.315-0.51-0.615-0.673-1.035c-0.123-0.317-0.27-0.794-0.31-1.671C4.631,14.688,4.622,14.403,4.622,12 s0.009-2.688,0.052-3.637c0.04-0.877,0.187-1.354,0.31-1.671c0.163-0.42,0.358-0.72,0.673-1.035 c0.315-0.315,0.615-0.51,1.035-0.673c0.317-0.123,0.794-0.27,1.671-0.31C9.312,4.631,9.597,4.622,12,4.622 M12,3 C9.556,3,9.249,3.01,8.289,3.054C7.331,3.098,6.677,3.25,6.105,3.472C5.513,3.702,5.011,4.01,4.511,4.511 c-0.5,0.5-0.808,1.002-1.038,1.594C3.25,6.677,3.098,7.331,3.054,8.289C3.01,9.249,3,9.556,3,12c0,2.444,0.01,2.751,0.054,3.711 c0.044,0.958,0.196,1.612,0.418,2.185c0.23,0.592,0.538,1.094,1.038,1.594c0.5,0.5,1.002,0.808,1.594,1.038 c0.572,0.222,1.227,0.375,2.185,0.418C9.249,20.99,9.556,21,12,21s2.751-0.01,3.711-0.054c0.958-0.044,1.612-0.196,2.185-0.418 c0.592-0.23,1.094-0.538,1.594-1.038c0.5-0.5,0.808-1.002,1.038-1.594c0.222-0.572,0.375-1.227,0.418-2.185 C20.99,14.751,21,14.444,21,12s-0.01-2.751-0.054-3.711c-0.044-0.958-0.196-1.612-0.418-2.185c-0.23-0.592-0.538-1.094-1.038-1.594 c-0.5-0.5-1.002-0.808-1.594-1.038c-0.572-0.222-1.227-0.375-2.185-0.418C14.751,3.01,14.444,3,12,3L12,3z M12,7.378 c-2.552,0-4.622,2.069-4.622,4.622S9.448,16.622,12,16.622s4.622-2.069,4.622-4.622S14.552,7.378,12,7.378z M12,15 c-1.657,0-3-1.343-3-3s1.343-3,3-3s3,1.343,3,3S13.657,15,12,15z M16.804,6.116c-0.596,0-1.08,0.484-1.08,1.08 s0.484,1.08,1.08,1.08c0.596,0,1.08-0.484,1.08-1.08S17.401,6.116,16.804,6.116z" fill="currentColor" />
+          </svg>
+        </a>
+
+        <a href="https://twitter.com/participaCIMA" class="social-link" title="Twitter" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M22.23,5.924c-0.736,0.326-1.527,0.547-2.357,0.646c0.847-0.508,1.498-1.312,1.804-2.27 c-0.793,0.47-1.671,0.812-2.606,0.996C18.324,4.498,17.257,4,16.077,4c-2.266,0-4.103,1.837-4.103,4.103 c0,0.322,0.036,0.635,0.106,0.935C8.67,8.867,5.647,7.234,3.623,4.751C3.27,5.357,3.067,6.062,3.067,6.814 c0,1.424,0.724,2.679,1.825,3.415c-0.673-0.021-1.305-0.206-1.859-0.513c0,0.017,0,0.034,0,0.052c0,1.988,1.414,3.647,3.292,4.023 c-0.344,0.094-0.707,0.144-1.081,0.144c-0.264,0-0.521-0.026-0.772-0.074c0.522,1.63,2.038,2.816,3.833,2.85 c-1.404,1.1-3.174,1.756-5.096,1.756c-0.331,0-0.658-0.019-0.979-0.057c1.816,1.164,3.973,1.843,6.29,1.843 c7.547,0,11.675-6.252,11.675-11.675c0-0.178-0.004-0.355-0.012-0.531C20.985,7.47,21.68,6.747,22.23,5.924z" fill="currentColor"/>
+          </svg>
+        </a>
+
+        <a href="https://bsky.app/profile/participacima.bsky.social" class="social-link" title="Bluesky" target="_blank" rel="noopener noreferrer" aria-label="Bluesky">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M6.3,4.2c2.3,1.7,4.8,5.3,5.7,7.2.9-1.9,3.4-5.4,5.7-7.2,1.7-1.3,4.3-2.2,4.3.9s-.4,5.2-.6,5.9c-.7,2.6-3.3,3.2-5.6,2.8,4,.7,5.1,3,2.9,5.3-5,5.2-6.7-2.8-6.7-2.8,0,0-1.7,8-6.7,2.8-2.2-2.3-1.2-4.6,2.9-5.3-2.3.4-4.9-.3-5.6-2.8-.2-.7-.6-5.3-.6-5.9,0-3.1,2.7-2.1,4.3-.9h0Z" fill="currentColor"/>
+          </svg>
+        </a>
+
+        <a href="mailto:colectivo.cima@uma.es" class="social-link" title="Email" aria-label="Email">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" stroke-width="1.2" fill="none" />
+            <path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.2" fill="none" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © 2026 Colectivo Investigador de Málaga.
+  </footer>
+  </main>
+
+  <script src="Scripts/salario.js"></script>
+  <script src="Scripts/trienios.js"></script>
+  <script src="Scripts/main.js"></script>
+</body>
+</html>
