@@ -22,11 +22,14 @@ function switchMode(mode) {
   trieniosFields.classList.toggle('hidden', mode !== 'trienios');
 
   if (mode === 'salary') {
-    calculatorInstructions.textContent = 'Introduce la fecha de inicio del contrato predoctoral \
-                                          y selecciona si perteneces a una convocatoria FPU reciente.';
+    calculatorInstructions.textContent = 'Si tienes, o has tenido recientemente, \
+          un contrato predoctoral, puedes calcular cuánto te deben de atrasos salariales. Para ello, introduce \
+          la fecha de inicio del contrato predoctoral y selecciona si perteneces a una convocatoria FPU reciente \
+          (ya que algunas tienen salarios por encima del EPIPF)';
   } else {
-    calculatorInstructions.textContent = 'Introduce la fecha desde la que empezaste a estar contratado \
-                                          en la UMA y, si procede, la fecha final del contrato.';
+    calculatorInstructions.textContent = 'Los trienios son complementos salariales que se obtienen por cada período \
+                    de 3 años trabajados en administraciones públicas. Asumiendo que no has trabajado en ninguna otra \
+                    que la UMA, y que has estado contratado de forma ininterrumpida, puedes calcular aquí cuánto habrías acumulado.';
   }
 
   resultBox.textContent = 'Selecciona una opción y completa los datos para calcular.';
@@ -61,7 +64,7 @@ calculateBtn.addEventListener('click', () => {
     resultBox.style.color = varComputedColor(resultBox, '--text');
     // Damos el salario con máximo 2 cifras decimales
     if (resultado.deuda === 0) {
-      resultBox.innerHTML = `No tienes salario atrasado acumulado según EPIPF.`;
+      resultBox.innerHTML = `No tienes deuda salarial según los mínimos marcados por EPIPF.`;
       clearBreakdown();
     } else {
       const addText = resultado.indemnizacion > 0 ? `<br>De los cuales 

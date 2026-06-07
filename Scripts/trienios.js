@@ -3,7 +3,6 @@ function getMonthDiff(start, end) {
 }
 
 const trienioRates = [
-  { year: 2019, rate: 45.29 },
   { year: 2020, rate: 46.32 },
   { year: 2021, rate: 46.74 },
   { year: 2022, rate: 47.67 },
@@ -29,10 +28,16 @@ function calcularTrienios(startDate, endDate) {
   let currentMonth = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
   const monthlyData = [];
 
+  const initialDateTSJA = new Date(2020, 6, 1);
+
   for (let monthIndex = 0; monthIndex < totalMonths; monthIndex++) {
     const accumulatedTrienios = Math.floor(monthIndex / 36);
-    const monthlyRate = getRateForYear(currentMonth.getFullYear());
-    const monthAmount = accumulatedTrienios * monthlyRate;
+    let monthAmount = 0;
+    // Solo acumular trienios a partir de julio de 2020 (Según sentencia TSJA)
+    if (currentMonth >= initialDateTSJA) {
+      const monthlyRate = getRateForYear(currentMonth.getFullYear());
+      monthAmount = accumulatedTrienios * monthlyRate;
+    }
 
     totalDue += monthAmount;
 
