@@ -57,7 +57,7 @@
         ayuda externa lo cubre o no.</p>
       <p style="margin-top: 5px"> Mientras otras universidades andaluzas ya los pagan a todo el personal investigador
         (véase <a href="https://serviciopdi.ugr.es/contratado/trieniosinvestigadores/resolucion.html">esta resolución 
-        de la UGR en 2023</a>), la <b>UMA opta por el silencio administrativo</b> ante cualquier petición formal
+        de 2023 de la UGR</a>), la <b>UMA opta por el silencio administrativo</b> ante cualquier petición formal
         de reconocimiento de este derecho, alegando que están "a la espera de instrucciones" sin fijar ningún 
         plazo. De nuevo, <b>se ahorran dinero</b>, en esta ocasión <b>no acatando una sentencia judicial</b>. Es una estrategia de desgaste: si no reclamas, ellos ganan.</p>
       
@@ -75,8 +75,9 @@
       <p style="margin-top: 5px">En la UMA, esta práctica de discriminación salarial se ha normalizado tanto que ni siquiera se 
         cuestiona. <b>Es el momento de decir basta.</b> Bajo nuestro Convenio Colectivo, no hay excusa: la UMA es tu empleadora y
         debe garantizar la igualdad retributiva, <b>incluyendo subidas salariales, trienios y otros complementos</b>. Aunque
-        en este caso no es sencillo calcular qué atrasos salariales te podrían deber (y por eso no existe una sección para esto en
-        la calculadora de más abajo), lo que es cierto es que hay mucho por ganar.</p>
+        en este caso no es sencillo saber si se podrá conseguir algo retroactivo, lo que es cierto es que hay mucho por ganar a futuro,
+        y en la calculadora de abajo puedes hacer el ejercicio mental de cuánto hubieras cobrado de más si te hubiesen aplicado
+        las últimas subidas salariales.</p>
 
     </section>
 
@@ -85,8 +86,9 @@
       <div class="calculator-header">
         <p class="calculator-note">Elige el tipo de cálculo que te interese:</p>
         <div class="calculator-tabs">
-          <button id="modeSalary" type="button" class="mode-button active">Atrasos salariales predoc</button>
-          <button id="modeTrienios" type="button" class="mode-button">Trienios</button>
+          <button id="modeSalary" type="button" class="mode-button active">1. Atrasos salariales predocs</button>
+          <button id="modeTrienios" type="button" class="mode-button">2. Trienios</button>
+          <button id="modeSalaryOther" type="button" class="mode-button">3. Subidas salariales otros contratos</button>
         </div>
         <p id="calculatorInstructions" class="calculator-instructions">Si tienes, o has tenido recientemente,
           un contrato predoctoral, puedes calcular cuánto te deben de atrasos salariales. Para ello, introduce 
@@ -115,6 +117,17 @@
         <input id="umaEnd" type="date" />
       </div>
 
+      <div class="field-group hidden" id="salaryOtherFields">
+        <label for="contractStart">Fecha en la que empezaste tu contrato postdoc o con cargo a proyecto en la UMA</label>
+        <input id="contractStart" type="date" />
+
+        <label for="contractSalary">Salario bruto anual de tu contrato</label>
+        <input id="contractSalary" type="number" step="0.01" min="0" value="24000" />
+
+        <label for="contractEnd">Fecha final del contrato (opcional, si tu contrato ya terminó)</label>
+        <input id="contractEnd" type="date" />
+      </div>
+
       <div class="button-row">
         <button id="calculateBtn" type="button">Calcular</button>
       </div>
@@ -127,8 +140,8 @@
       </details>
 
       <div class="disclaimer">
-      <p>Esta calculadora ofrece una estimación de lo que podría deberte la UMA. 
-        Para datos oficiales, consulta con tu representación sindical o jurídica.</p>
+      <p>Esta calculadora solo ofrece una estimación, y no se asume responsabilidad legal por el uso que 
+        se de a sus resultados. Para asesoramiento profesional, consulta con tu representación sindical o jurídica.</p>
     </div>
     </section>
 
@@ -141,6 +154,8 @@
 
       <p style="margin-top: 5px">La UMA solo reacciona ante la presión. Ya no basta con correos diplomáticos al Vicerrectorado que quedan 
         sin respuesta. Es el momento de visibilizar que nuestro trabajo no es una beca, es un empleo, y la ley está de nuestra parte.</p>
+
+      <p style="margin-top: 5px">Para los trienios, pedirlos periódicamente por registro aunque no respondan.</p>
 
       <p style="margin-top: 5px">Sabemos que la situación económica de la UMA es crítica, pero <b>su labor no es actuar 
       como verdugo de sus empleados, sino defenderlos</b>. En lugar de poner pie en pared frente a los responsables
@@ -193,6 +208,7 @@
 
   <script src="Scripts/salario.js"></script>
   <script src="Scripts/trienios.js"></script>
+  <script src="Scripts/salaryOther.js"></script>
   <script src="Scripts/main.js"></script>
 </body>
 </html>

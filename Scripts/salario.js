@@ -92,9 +92,9 @@ function calcularSalarioAtrasado(startDate, fpuConv) {
     convData = salarioConvsFPU.find(x => x.conv === fpuConv);
   }
 
-  const totalMonths = Math.max(0, getMonthDiff(startDate, finalDate));
+  const totalMonths = Math.max(0, getMonthDiff(startDate, finalDate))+1;
   let totalDue = 0;
-  let currentMonth = new Date(startDate);
+  let currentMonth = new Date(startDate.getFullYear(), startDate.getMonth(), 1); // Empezamos desde el primer día del mes de inicio
   let indemnizacionDue = 0;
   const monthlyData = [];
 
@@ -115,6 +115,17 @@ function calcularSalarioAtrasado(startDate, fpuConv) {
     let monthAmount = 0
     if (monthSalaryUpdated > monthSalary) {
       monthAmount = monthSalaryUpdated - monthSalary;
+      if (monthIndex === 0) {
+        // Para el primer mes, hay que multiplicar el salario por el número de días del mes que restan desde la fecha de inicio
+        const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
+        const startDay = startDate.getDate();
+        monthAmount *= (daysInMonth - startDay + 1) / daysInMonth;
+      } else if (monthIndex === totalMonths - 1) {
+        // Para el último mes, hay que multiplicar el salario por el número de días del mes que han pasado hasta la fecha final
+        const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
+        const diffDays = (finalDate - currentMonth) / (1000 * 60 * 60 * 24);
+        monthAmount *= diffDays / daysInMonth;
+      }
       totalDue += monthAmount;
     }
 

@@ -1,11 +1,19 @@
 const modeSalary = document.getElementById('modeSalary');
-const modeTrienios = document.getElementById('modeTrienios');
 const salaryFields = document.getElementById('salaryFields');
-const trieniosFields = document.getElementById('trieniosFields');
 const predoctoralStart = document.getElementById('predoctoralStart');
 const fpuConv = document.getElementById('fpuConv');
+
+const modeTrienios = document.getElementById('modeTrienios');
+const trieniosFields = document.getElementById('trieniosFields');
 const umaStart = document.getElementById('umaStart');
 const umaEnd = document.getElementById('umaEnd');
+
+const salaryOtherFields = document.getElementById('salaryOtherFields');
+const modeSalaryOther = document.getElementById('modeSalaryOther');
+const contractStart = document.getElementById('contractStart');
+const contractSalary = document.getElementById('contractSalary');
+const contractEnd = document.getElementById('contractEnd');
+
 const calculateBtn = document.getElementById('calculateBtn');
 const resultBox = document.getElementById('result');
 const calculatorInstructions = document.getElementById('calculatorInstructions');
@@ -18,18 +26,23 @@ function switchMode(mode) {
   currentMode = mode;
   modeSalary.classList.toggle('active', mode === 'salary');
   modeTrienios.classList.toggle('active', mode === 'trienios');
+  modeSalaryOther.classList.toggle('active', mode === 'salaryOther');
   salaryFields.classList.toggle('hidden', mode !== 'salary');
   trieniosFields.classList.toggle('hidden', mode !== 'trienios');
+  salaryOtherFields.classList.toggle('hidden', mode !== 'salaryOther');
 
   if (mode === 'salary') {
     calculatorInstructions.textContent = 'Si tienes, o has tenido recientemente, \
           un contrato predoctoral, puedes calcular cuánto te deben de atrasos salariales. Para ello, introduce \
           la fecha de inicio del contrato predoctoral y selecciona si perteneces a una convocatoria FPU reciente \
           (ya que algunas tienen salarios por encima del EPIPF)';
-  } else {
+  } else if (mode === 'trienios'){
     calculatorInstructions.textContent = 'Los trienios son complementos salariales que se obtienen por cada período \
                     de 3 años trabajados en administraciones públicas. Asumiendo que no has trabajado en ninguna otra \
                     que la UMA, y que has estado contratado de forma ininterrumpida, puedes calcular aquí cuánto habrías acumulado.';
+  } else if (mode === 'salaryOther'){
+    calculatorInstructions.textContent = 'Si tienes, o has tenido recientemente, un contrato postdoctoral o con cargo a proyecto en la UMA, \
+                    puedes calcular cuánto más habrías cobrado en bruto hasta hoy si te hubiesen aplicado las últimas subidas salariales.';
   }
 
   resultBox.textContent = 'Selecciona una opción y completa los datos para calcular.';
@@ -39,7 +52,7 @@ function switchMode(mode) {
 
 modeSalary.addEventListener('click', () => switchMode('salary'));
 modeTrienios.addEventListener('click', () => switchMode('trienios'));
-
+modeSalaryOther.addEventListener('click', () => switchMode('salaryOther'));
 calculateBtn.addEventListener('click', () => {
   if (currentMode === 'salary') {
     const fechaValor = predoctoralStart.value;
@@ -75,7 +88,7 @@ calculateBtn.addEventListener('click', () => {
                             ${total.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}€` + addText;
       renderBreakdown(resultado.breakdown);
     }
-  } else {
+  } else if (currentMode === 'trienios') {
     const startValor = umaStart.value;
     const endValor = umaEnd.value;
 
@@ -103,9 +116,46 @@ calculateBtn.addEventListener('click', () => {
                             (≈${resultado.totalMonths} meses completos) en la UMA.`;
       clearBreakdown();
     } else {
-      resultBox.innerHTML = `Tienes ${resultado.trienios} trienio(s) completos tras 
-                            ${resultado.totalMonths} meses.<br>Deuda bruta estimada acumulada: 
-                            ${resultado.deuda.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}€.`;
+      resultBox.innerHTML = `Deuda bruta estimada acumulada: 
+                            ${resultado.deuda.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}€
+                            <br><small>Tienes ${resultado.trienios} trienio(s) completo(s) tras 
+                            ${resultado.totalMonths} meses.</small>`;
+      renderBreakdown(resultado.breakdown);
+    }
+  } else if (currentMode === 'salaryOther') {
+    const contractStartValor = contractStart.value;
+    const contractSalaryValor = parseFloat(contractSalary.value);
+
+    if (!contractStartValor) {
+      resultBox.textContent = 'Introduce la fecha de inicio del contrato para calcular el salario atrasado.';
+      resultBox.style.color = '#b91c1c';
+      return;
+    }
+
+    if (!contractSalaryValor || contractSalaryValor <= 0) {
+      resultBox.textContent = 'Introduce un salario anual válido (mayor que 0).';
+      resultBox.style.color = '#b91c1c';
+      return;
+    }
+
+    const contractStartDate = new Date(contractStartValor + 'T00:00:00');
+    const contractEndDate = contractEnd.value ? new Date(contractEnd.value + 'T00:00:00') : null;
+    const resultado = calcularSalarioOtro(contractStartDate, contractSalaryValor, contractEndDate);
+
+    if (!resultado) {
+      resultBox.textContent = 'La fecha de inicio no puede ser posterior a hoy.';
+      resultBox.style.color = '#b91c1c';
+      clearBreakdown();
+      return;
+    }
+
+    resultBox.style.color = varComputedColor(resultBox, '--text');
+    if (resultado.deuda === 0) {
+      resultBox.innerHTML = `Con los datos proporcionado, no te habrías beneficiado de ninguna subida salarial aún.`;
+      clearBreakdown();
+    } else {
+      resultBox.innerHTML = `Salario bruto adicional acumulado si te hubieran aplicado los aumentos salariales: 
+                            ${resultado.deuda.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}€`;
       renderBreakdown(resultado.breakdown);
     }
   }
@@ -132,9 +182,8 @@ function renderBreakdown(breakdown) {
     return;
   }
 
-  let html = '<div class="breakdown-info">Matriz de meses (filas) por años (columnas). \
-              Cada celda muestra el dinero acumulado en ese mes.</div>';
-  html += '<div class="breakdown-scroll"><table class="breakdown-matrix-table"><thead><tr><th>Mes</th>';
+  let html = '<div class="breakdown-info">Aquí puedes ver el desglose de las cantidades generadas en cada mes de cada año.</div>';
+  html += '<div class="breakdown-scroll"><table class="breakdown-matrix-table"><thead><tr><th>Mes \\ Año</th>';
   
   // Encabezados de años
   years.forEach(year => {
