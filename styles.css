@@ -81,6 +81,7 @@ header h1 {
 
 .intro p,
 .intro ul,
+.intro ol,
 .intro li {
   margin: 0;
   line-height: 1.5;
@@ -89,13 +90,18 @@ header h1 {
   font-family: inherit;
 }
 
-.intro ul {
+.intro ul,
+.intro ol {
   padding-left: 2rem;
   margin: 5px 0 10px;
 }
 
 .intro li {
   margin-bottom: 0rem;
+}
+
+.intro ol li::marker {
+  font-weight: bold;
 }
 
 .card {
