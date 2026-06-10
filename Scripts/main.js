@@ -151,7 +151,7 @@ calculateBtn.addEventListener('click', () => {
 
     resultBox.style.color = varComputedColor(resultBox, '--text');
     if (resultado.deuda === 0) {
-      resultBox.innerHTML = `Con los datos proporcionado, no te habrías beneficiado de ninguna subida salarial aún.`;
+      resultBox.innerHTML = `Con los datos proporcionados, no te habrías beneficiado de ninguna subida salarial aún.`;
       clearBreakdown();
     } else {
       resultBox.innerHTML = `Salario bruto adicional acumulado si te hubieran aplicado los aumentos salariales: 
