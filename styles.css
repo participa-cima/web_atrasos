@@ -388,3 +388,90 @@ footer {
   width: 20px;
   height: 20px;
 }
+
+/* ============================================================================
+   TABLA DE CONTENIDOS / ÍNDICE
+   ============================================================================ */
+
+.table-of-contents {
+  margin: 0 0 40px 0;
+  padding: 28px 24px;
+  background: linear-gradient(135deg, var(--accent-soft) 0%, rgba(230, 57, 70, 0.08) 100%);
+  border-radius: 20px;
+  border: 1px solid rgba(230, 57, 70, 0.2);
+  box-shadow: 0 8px 20px rgba(230, 57, 70, 0.1);
+}
+
+.toc-container {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.table-of-contents h2 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  color: var(--accent);
+  font-size: 1.3rem;
+}
+
+.toc-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.toc-nav > ul > li {
+  margin-bottom: 12px;
+}
+
+.toc-nav > ul > li > a {
+  display: block;
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 8px 12px;
+  border-left: 3px solid var(--accent);
+  padding-left: 15px;
+  transition: all 0.2s ease;
+}
+
+.toc-nav > ul > li > a:hover {
+  color: var(--accent);
+  padding-left: 20px;
+  background: rgba(230, 57, 70, 0.08);
+  border-radius: 6px;
+}
+
+.toc-nav > ul > li > ul {
+  margin: 8px 0 0 0;
+  padding-left: 24px;
+  border-left: 2px solid rgba(230, 57, 70, 0.3);
+  margin-left: 6px;
+}
+
+.toc-nav > ul > li > ul > li {
+  margin-bottom: 6px;
+}
+
+.toc-nav > ul > li > ul > li > a {
+  display: block;
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 6px 10px;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.toc-nav > ul > li > ul > li > a:hover {
+  color: var(--accent);
+  background: rgba(230, 57, 70, 0.1);
+  padding-left: 15px;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
