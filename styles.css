@@ -61,7 +61,7 @@ header h1 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  max-width: 120px;
+  max-width: 250px;
   height: auto;
   object-fit: contain;
 }
