@@ -19,8 +19,22 @@ const resultBox = document.getElementById('result');
 const calculatorInstructions = document.getElementById('calculatorInstructions');
 const breakdownDetails = document.getElementById('breakdownDetails');
 const breakdownContainer = document.getElementById('breakdownContainer');
+const mesesRetrasoElements = document.querySelectorAll('.mesesRetraso');
 
 let currentMode = 'salary';
+
+function actualizarMesesRetraso() {
+  if (!mesesRetrasoElements.length) return;
+
+  const fechaInicio = new Date(2025, 6, 1);
+  const hoy = new Date();
+  const meses = (hoy.getFullYear() - fechaInicio.getFullYear()) * 12 + (hoy.getMonth() - fechaInicio.getMonth());
+  const texto = meses.toString();
+
+  mesesRetrasoElements.forEach((elemento) => {
+    elemento.textContent = texto;
+  });
+}
 
 function switchMode(mode) {
   currentMode = mode;
@@ -49,6 +63,8 @@ function switchMode(mode) {
   resultBox.style.color = varComputedColor(resultBox, '--text');
   clearBreakdown();
 }
+
+actualizarMesesRetraso();
 
 modeSalary.addEventListener('click', () => switchMode('salary'));
 modeTrienios.addEventListener('click', () => switchMode('trienios'));
